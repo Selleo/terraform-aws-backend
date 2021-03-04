@@ -19,7 +19,7 @@ resource "aws_launch_configuration" "this" {
   # TODO: add to var 
   root_block_device {
     volume_type = "gp2"
-    volume_size = 8
+    volume_size = 30
     iops        = "100"
   }
 
@@ -39,14 +39,14 @@ resource "aws_launch_configuration" "this" {
 resource "aws_ecs_cluster" "this" {
   name = random_id.prefix.hex
 
-  tags = merge(var.tags, { owner = "self" })
+  tags = merge({ owner = "self" }, var.tags)
 }
 
 resource "aws_placement_group" "this" {
   name     = random_id.prefix.hex
   strategy = "spread" # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html
 
-  tags = merge(var.tags, { owner = "self" })
+  tags = merge({ owner = "self" }, var.tags)
 }
 
 resource "aws_autoscaling_group" "portal_autoscaling_group" {
@@ -68,7 +68,7 @@ resource "aws_autoscaling_group" "portal_autoscaling_group" {
   health_check_type         = "EC2"
 
   tags = [
-    for k, v in merge(var.tags, { owner = "self" }) : {
+    for k, v in merge({ owner = "self" }, var.tags) : {
       key                 = k
       value               = v
       propagate_at_launch = true
@@ -81,3 +81,4 @@ resource "aws_autoscaling_group" "portal_autoscaling_group" {
     create_before_destroy = true
   }
 }
+
