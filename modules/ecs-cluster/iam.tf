@@ -24,3 +24,31 @@ resource "aws_iam_instance_profile" "instance_profile" {
   role = aws_iam_role.instance_role.name
 }
 
+resource "aws_iam_role_policy" "ecs_instance" {
+  name   = "${random_id.prefix.hex}-ecs-instance"
+  role   = aws_iam_role.instance_role.name
+  policy = data.aws_iam_policy_document.ecs_instance.json
+}
+
+data "aws_iam_policy_document" "ecs_instance" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "ecs:RegisterContainerInstance",
+      "ecs:DeregisterContainerInstance",
+      "ecs:DiscoverPollEndpoint",
+      "ecs:Poll",
+      "ecs:Submit*",
+      "ecs:StartTelemetrySession",
+      "ecr:GetAuthorizationToken",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+
+    resources = ["*"]
+  }
+}
+

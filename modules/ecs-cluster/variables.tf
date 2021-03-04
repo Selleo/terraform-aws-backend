@@ -60,3 +60,14 @@ variable "security_groups" {
   default     = []
 }
 
+variable "ecs_loglevel" {
+  type        = string
+  description = "ECS Cluster log level."
+  default     = "info"
+
+  validation {
+    condition     = can(regex("^crit|error|warn|info|debug$", var.ecs_loglevel))
+    error_message = "The ecs_loglevel must be one of crit, error, warn, info, debug."
+  }
+}
+

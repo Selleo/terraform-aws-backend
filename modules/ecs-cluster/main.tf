@@ -27,7 +27,8 @@ resource "aws_launch_configuration" "this" {
 
   user_data = templatefile("${path.module}/scripts/user_data.sh.tpl",
     {
-      ecs_cluster = aws_ecs_cluster.this.name,
+      ecs_cluster  = aws_ecs_cluster.this.name,
+      ecs_loglevel = var.ecs_loglevel
     }
   )
 
@@ -52,7 +53,6 @@ resource "aws_placement_group" "this" {
 resource "aws_autoscaling_group" "portal_autoscaling_group" {
   name                 = aws_launch_configuration.this.name
   launch_configuration = aws_launch_configuration.this.name
-  availability_zones   = data.aws_availability_zones.this.zone_ids
   vpc_zone_identifier  = var.subnet_ids
 
   min_size         = var.autoscaling_group.min_size
