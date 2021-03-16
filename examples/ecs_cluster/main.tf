@@ -32,91 +32,79 @@ module "ecs_cluster" {
   }
 }
 
-resource "aws_cloudwatch_log_group" "this" {
-  name              = "test"
-  retention_in_days = 365
+module "ecs_service" {
+  source = "../../modules/ecs-service"
+
+  name           = "test"
+  ecs_cluster_id = module.ecs_cluster.ecs_cluster_id
+  desired_count  = 1
+  container_definition = {
+    cpu_units      = 256
+    mem_units      = 256
+    command        = ["bundle", "exec", "ruby", "main.rb"],
+    image          = "qbart/hello-ruby-sinatra:latest",
+    container_port = 4567
+    envs = {
+      "APP_ENV" = "production"
+    }
+  }
+}
+
+resource "aws_alb" "this" {
+  name            = "${var.environment}-${var.app_name}"
+  subnets         = module.vpc.public_subnets
+  security_groups = [TODO]
+  idle_timeout    = 1800
 
   tags = {
-    owner = "self"
+    Terraform   = "true"
+    Environment = "test"
   }
 }
 
-resource "aws_ecs_task_definition" "this" {
-  family = "test_task_definition"
-  container_definitions = jsonencode(
-    [
-      {
-        essential         = true,
-        memoryReservation = 256,
-        cpu               = 128,
-        name              = "test",
-        command           = ["bundle", "exec", "ruby", "main.rb"],
-        image             = "qbart/hello-ruby-sinatra:latest",
-        mountPoints       = [],
-        volumesFrom       = [],
-        portMappings = [
-          {
-            containerPort = 4567,
-            hostPort      = 0,
-            protocol      = "tcp",
-          },
-        ],
-        environment = [],
-        logConfiguration = {
-          logDriver = "awslogs",
-          options = {
-            awslogs-group  = aws_cloudwatch_log_group.this.name,
-            awslogs-region = "eu-central-1",
-          },
-        },
-      }
-  ])
+resource "aws_alb_listener" "http" {
+  load_balancer_arn = aws_alb.this.id
+  port              = 80
+  protocol          = "HTTP"
 
-  tags = {
-    owner = "self"
+  default_action {
+    target_group_arn = aws_alb_target_group.this.id
+    type             = "forward"
   }
 }
 
-data "aws_ecs_task_definition" "this" {
-  task_definition = aws_ecs_task_definition.this.family
-  depends_on      = [aws_ecs_task_definition.this]
+resource "aws_alb_listener" "https" {
+  load_balancer_arn = aws_alb.this.id
+  port              = 443
+  protocol          = "HTTPS"
+  certificate_arn   = var.cert_arn
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01" # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html
+
+  default_action {
+    target_group_arn = aws_alb_target_group.this.id
+    type             = "forward"
+  }
 }
 
-resource "aws_ecs_service" "this" {
-  name    = "test_service"
-  cluster = module.ecs_cluster.ecs_cluster_id
-  task_definition = "${aws_ecs_task_definition.this.family}:${max(
-    aws_ecs_task_definition.this.revision,
-    data.aws_ecs_task_definition.this.revision,
-  )}"
-  # iam_role        = "TODO"
-  # load_balancer
-  desired_count                      = 1
-  deployment_minimum_healthy_percent = 50
-  deployment_maximum_percent         = 200
+resource "aws_alb_target_group" "this" {
+  name                 = "tg"
+  port                 = var.app.port
+  protocol             = "HTTP"
+  vpc_id               = var.vpc_id
+  deregistration_delay = 30 # draining time
 
-  ordered_placement_strategy {
-    type  = "spread"
-    field = "attribute:ecs.avaiability-zones"
-  }
-
-  ordered_placement_strategy {
-    type  = "spread"
-    field = "instanceId"
-  }
-
-  ordered_placement_strategy {
-    type  = "binpack"
-    field = "cpu"
-  }
-
-  ordered_placement_strategy {
-    type  = "binpack"
-    field = "memory"
+  health_check {
+    path                = "/healthcheck"
+    protocol            = "HTTP"
+    timeout             = 10
+    interval            = 15
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+    matcher             = "200-308"
   }
 
   tags = {
-    owner = "self"
+    Terraform   = "true"
+    Environment = "test"
   }
 }
-

@@ -17,13 +17,12 @@ variable "desired_count" {
 
 variable "container_definition" {
   type = object({
-    desired_count = optional(number)
-    cpu_units     = optional(number)
-    mem_units     = optional(number)
-    command       = tuple(string)
-    image         = string
-    containerPort = number
-    envs          = optional(map(string))
+    cpu_units      = number
+    mem_units      = number
+    command        = list(string)
+    image          = string
+    container_port = number
+    envs           = map(string)
   })
   description = "Service container configuration."
 }
