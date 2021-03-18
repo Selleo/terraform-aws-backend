@@ -115,9 +115,9 @@ data "aws_iam_policy_document" "ecs" {
   }
 }
 
-resource "aws_iam_role_policy" "ecs" {
-  name   = "${var.name}-role-policy"
-  role   = aws_iam_role.ecs.name
+resource "aws_iam_role_policy" "cloudwatch" {
+  name   = "${var.name}-role-cloudwatch-policy"
+  role   = var.instance_role
   policy = data.aws_iam_policy_document.cloudwatch.json
 }
 
@@ -129,7 +129,29 @@ data "aws_iam_policy_document" "cloudwatch" {
       "logs:PutLogEvents"
     ]
 
-    resources = [aws_cloudwatch_log_group.this.arn]
+    resources = ["${aws_cloudwatch_log_group.this.arn}:*"]
+  }
+}
+
+resource "aws_iam_role_policy" "alb" {
+  name   = "${var.name}-role-alb-policy"
+  role   = aws_iam_role.ecs.name
+  policy = data.aws_iam_policy_document.alb.json
+}
+
+data "aws_iam_policy_document" "alb" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "ec2:Describe*",
+      "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+      "elasticloadbalancing:DeregisterTargets",
+      "elasticloadbalancing:Describe*",
+      "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+      "elasticloadbalancing:RegisterTargets"
+    ]
+
+    resources = ["*"]
   }
 }
 

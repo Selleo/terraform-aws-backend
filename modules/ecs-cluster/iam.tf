@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "instance_role" {
 
     principals {
       type        = "Service"
-      identifiers = ["ec2.amazonaws.com", "ecs.amazonaws.com"]
+      identifiers = ["ec2.amazonaws.com"]
     }
   }
 }
@@ -43,13 +43,7 @@ data "aws_iam_policy_document" "ecs_instance" {
       "ecr:GetAuthorizationToken",
       "ecr:BatchCheckLayerAvailability",
       "ecr:GetDownloadUrlForLayer",
-      "ecr:BatchGetImage",
-      "ec2:Describe*",
-      "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
-      "elasticloadbalancing:DeregisterTargets",
-      "elasticloadbalancing:Describe*",
-      "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
-      "elasticloadbalancing:RegisterTargets"
+      "ecr:BatchGetImage"
     ]
 
     resources = ["*"]

@@ -20,7 +20,7 @@ resource "aws_launch_configuration" "this" {
   root_block_device {
     volume_type = "gp2"
     volume_size = 30
-    iops        = "100"
+    iops        = 100
   }
 
   #TODO https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/cloudinit_config

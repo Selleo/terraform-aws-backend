@@ -10,6 +10,11 @@ variable "name" {
   description = "ECS Service name."
 }
 
+variable "instance_role" {
+  type        = string
+  description = "EC2 instance role."
+}
+
 variable "ecs_cluster_id" {
   type        = string
   description = "ECS Cluster id."
