@@ -1,5 +1,10 @@
 # required
 
+variable "vpc_id" {
+  type        = string
+  description = "VPC id."
+}
+
 variable "name" {
   type        = string
   description = "ECS Service name."

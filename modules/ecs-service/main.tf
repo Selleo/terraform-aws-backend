@@ -60,7 +60,13 @@ resource "aws_ecs_service" "this" {
     data.aws_ecs_task_definition.this.revision,
   )}"
   iam_role = aws_iam_role.ecs.arn
-  # load_balancer
+
+  load_balancer {
+    target_group_arn = aws_alb_target_group.this.arn
+    container_name   = var.name
+    container_port   = var.container_definition.container_port
+  }
+
   desired_count                      = var.desired_count
   deployment_minimum_healthy_percent = 50
   deployment_maximum_percent         = 200
@@ -125,4 +131,24 @@ data "aws_iam_policy_document" "cloudwatch" {
 
     resources = [aws_cloudwatch_log_group.this.arn]
   }
+}
+
+resource "aws_alb_target_group" "this" {
+  name                 = var.name
+  port                 = var.container_definition.container_port
+  protocol             = "HTTP"
+  vpc_id               = var.vpc_id
+  deregistration_delay = 30 # draining time
+
+  health_check {
+    path                = "/healthcheck"
+    protocol            = "HTTP"
+    timeout             = 10
+    interval            = 15
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+    matcher             = "200"
+  }
+
+  tags = merge({ owner = "self" }, var.tags)
 }

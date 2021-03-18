@@ -4,9 +4,9 @@ module "vpc" {
   name = "test"
   cidr = "10.0.0.0/16"
 
-  azs             = ["eu-central-1a"]
+  azs             = ["eu-central-1a", "eu-central-1b"]
   private_subnets = ["10.0.1.0/24"]
-  public_subnets  = ["10.0.101.0/24"]
+  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
 
   enable_nat_gateway = false
   enable_vpn_gateway = false
@@ -36,6 +36,7 @@ module "ecs_service" {
   source = "../../modules/ecs-service"
 
   name           = "test"
+  vpc_id         = module.vpc.vpc_id
   ecs_cluster_id = module.ecs_cluster.ecs_cluster_id
   desired_count  = 1
   container_definition = {
@@ -51,9 +52,9 @@ module "ecs_service" {
 }
 
 resource "aws_alb" "this" {
-  name            = "${var.environment}-${var.app_name}"
+  name            = "selleo-test"
   subnets         = module.vpc.public_subnets
-  security_groups = [TODO]
+  security_groups = [] #TODO
   idle_timeout    = 1800
 
   tags = {
@@ -62,49 +63,27 @@ resource "aws_alb" "this" {
   }
 }
 
-resource "aws_alb_listener" "http" {
-  load_balancer_arn = aws_alb.this.id
-  port              = 80
-  protocol          = "HTTP"
+# resource "aws_alb_listener" "http" {
+#   load_balancer_arn = aws_alb.this.id
+#   port              = 80
+#   protocol          = "HTTP"
 
-  default_action {
-    target_group_arn = aws_alb_target_group.this.id
-    type             = "forward"
-  }
-}
+#   default_action {
+#     target_group_arn = module.ecs_service.lb_target_group_id
+#     type             = "forward"
+#   }
+# }
 
-resource "aws_alb_listener" "https" {
-  load_balancer_arn = aws_alb.this.id
-  port              = 443
-  protocol          = "HTTPS"
-  certificate_arn   = var.cert_arn
-  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01" # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html
+# resource "aws_alb_listener" "https" {
+#   load_balancer_arn = aws_alb.this.id
+#   port              = 443
+#   protocol          = "HTTPS"
+#   certificate_arn   = var.cert_arn
+#   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01" # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html
 
-  default_action {
-    target_group_arn = aws_alb_target_group.this.id
-    type             = "forward"
-  }
-}
+#   default_action {
+#     target_group_arn = aws_alb_target_group.this.id
+#     type             = "forward"
+#   }
+# }
 
-resource "aws_alb_target_group" "this" {
-  name                 = "tg"
-  port                 = var.app.port
-  protocol             = "HTTP"
-  vpc_id               = var.vpc_id
-  deregistration_delay = 30 # draining time
-
-  health_check {
-    path                = "/healthcheck"
-    protocol            = "HTTP"
-    timeout             = 10
-    interval            = 15
-    healthy_threshold   = 3
-    unhealthy_threshold = 3
-    matcher             = "200-308"
-  }
-
-  tags = {
-    Terraform   = "true"
-    Environment = "test"
-  }
-}
