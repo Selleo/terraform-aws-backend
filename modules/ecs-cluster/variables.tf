@@ -34,6 +34,11 @@ variable "autoscaling_group" {
   description = "Autoscaling group configuration."
 }
 
+variable "loadbalancer_sg_id" {
+  type        = string
+  description = "LoadBalancer security group id."
+}
+
 # optional
 
 variable "tags" {

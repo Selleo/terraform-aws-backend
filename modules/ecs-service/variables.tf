@@ -36,6 +36,7 @@ variable "container_definition" {
   })
   description = "Service container configuration."
 }
+
 # optional
 
 variable "tags" {

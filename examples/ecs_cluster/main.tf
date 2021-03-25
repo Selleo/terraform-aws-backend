@@ -17,15 +17,29 @@ module "vpc" {
   }
 }
 
+module "loadbalancer" {
+  source = "../../modules/loadbalancer"
+
+  name       = "ecs-lb"
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.public_subnets
+
+  tags = {
+    Terraform   = "true"
+    Environment = "test"
+  }
+}
+
 module "ecs_cluster" {
   source = "../../modules/ecs-cluster"
 
-  name_prefix     = "test"
-  region          = "eu-central-1"
-  vpc_id          = module.vpc.vpc_id
-  subnet_ids      = module.vpc.public_subnets
-  instance_type   = "t3.micro"
-  security_groups = [aws_security_group.instance_sg.id]
+  name_prefix        = "test"
+  region             = "eu-central-1"
+  vpc_id             = module.vpc.vpc_id
+  subnet_ids         = module.vpc.public_subnets
+  instance_type      = "t3.micro"
+  security_groups    = []
+  loadbalancer_sg_id = module.loadbalancer.loadbalancer_sg_id
   autoscaling_group = {
     min_size         = 1
     max_size         = 1
@@ -53,87 +67,8 @@ module "ecs_service" {
   }
 }
 
-resource "aws_security_group" "instance_sg" {
-  description = "controls direct access to application instances"
-  vpc_id      = module.vpc.vpc_id
-  name        = "instance_sg"
-
-  tags = {
-    Terraform   = "true"
-    Environment = "test"
-  }
-}
-
-resource "aws_security_group_rule" "ephemeral_port_range" {
-  type                     = "ingress"
-  from_port                = 32768
-  to_port                  = 65535
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.lb_sg.id
-  security_group_id        = aws_security_group.instance_sg.id
-}
-
-resource "aws_security_group_rule" "allow_all_outbound_ec2_instance" {
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "all"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.instance_sg.id
-}
-
-resource "aws_security_group" "lb_sg" {
-  description = "controls access to the application ELB"
-  vpc_id      = module.vpc.vpc_id
-  name        = "test-lb-sg"
-
-  tags = {
-    Terraform   = "true"
-    Environment = "test"
-  }
-}
-
-resource "aws_security_group_rule" "http" {
-  type              = "ingress"
-  from_port         = 80
-  to_port           = 80
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.lb_sg.id
-}
-
-resource "aws_security_group_rule" "https" {
-  type              = "ingress"
-  from_port         = 443
-  to_port           = 443
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.lb_sg.id
-}
-
-resource "aws_security_group_rule" "allow_all_outbound_lb" {
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "all"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.instance_sg.id
-}
-
-resource "aws_alb" "this" {
-  name            = "selleo-test"
-  subnets         = module.vpc.public_subnets
-  security_groups = [aws_security_group.lb_sg.id]
-  idle_timeout    = 1800
-
-  tags = {
-    Terraform   = "true"
-    Environment = "test"
-  }
-}
-
 resource "aws_alb_listener" "http" {
-  load_balancer_arn = aws_alb.this.id
+  load_balancer_arn = module.loadbalancer.loadbalancer_id
   port              = 80
   protocol          = "HTTP"
 
