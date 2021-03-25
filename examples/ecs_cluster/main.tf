@@ -65,6 +65,10 @@ module "ecs_service" {
       "APP_ENV" = "production"
     }
   }
+
+  depends_on = [
+    module.loadbalancer
+  ]
 }
 
 resource "aws_alb_listener" "http" {
