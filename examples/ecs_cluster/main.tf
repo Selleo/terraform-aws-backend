@@ -4,9 +4,9 @@ module "vpc" {
   name = "test"
   cidr = "10.0.0.0/16"
 
-  azs             = ["eu-central-1a"]
+  azs             = ["eu-central-1a", "eu-central-1b"]
   private_subnets = ["10.0.1.0/24"]
-  public_subnets  = ["10.0.101.0/24"]
+  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
 
   enable_nat_gateway = false
   enable_vpn_gateway = false
@@ -17,14 +17,29 @@ module "vpc" {
   }
 }
 
+module "loadbalancer" {
+  source = "../../modules/loadbalancer"
+
+  name       = "ecs-lb"
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.public_subnets
+
+  tags = {
+    Terraform   = "true"
+    Environment = "test"
+  }
+}
+
 module "ecs_cluster" {
   source = "../../modules/ecs-cluster"
 
-  name_prefix   = "test"
-  region        = "eu-central-1"
-  vpc_id        = module.vpc.vpc_id
-  subnet_ids    = module.vpc.public_subnets
-  instance_type = "t3.micro"
+  name_prefix        = "test"
+  region             = "eu-central-1"
+  vpc_id             = module.vpc.vpc_id
+  subnet_ids         = module.vpc.public_subnets
+  instance_type      = "t3.micro"
+  security_groups    = []
+  loadbalancer_sg_id = module.loadbalancer.loadbalancer_sg_id
   autoscaling_group = {
     min_size         = 1
     max_size         = 1
@@ -32,91 +47,51 @@ module "ecs_cluster" {
   }
 }
 
-resource "aws_cloudwatch_log_group" "this" {
-  name              = "test"
-  retention_in_days = 365
+module "ecs_service" {
+  source = "../../modules/ecs-service"
 
-  tags = {
-    owner = "self"
+  name           = "test"
+  vpc_id         = module.vpc.vpc_id
+  ecs_cluster_id = module.ecs_cluster.ecs_cluster_id
+  desired_count  = 1
+  instance_role  = module.ecs_cluster.instance_role
+  container_definition = {
+    cpu_units      = 256
+    mem_units      = 256
+    command        = ["bundle", "exec", "ruby", "main.rb"],
+    image          = "qbart/hello-ruby-sinatra:latest",
+    container_port = 4567
+    envs = {
+      "APP_ENV" = "production"
+    }
+  }
+
+  depends_on = [
+    module.loadbalancer
+  ]
+}
+
+resource "aws_alb_listener" "http" {
+  load_balancer_arn = module.loadbalancer.loadbalancer_id
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    target_group_arn = module.ecs_service.lb_target_group_id
+    type             = "forward"
   }
 }
 
-resource "aws_ecs_task_definition" "this" {
-  family = "test_task_definition"
-  container_definitions = jsonencode(
-    [
-      {
-        essential         = true,
-        memoryReservation = 256,
-        cpu               = 128,
-        name              = "test",
-        command           = ["bundle", "exec", "ruby", "main.rb"],
-        image             = "qbart/hello-ruby-sinatra:latest",
-        mountPoints       = [],
-        volumesFrom       = [],
-        portMappings = [
-          {
-            containerPort = 4567,
-            hostPort      = 0,
-            protocol      = "tcp",
-          },
-        ],
-        environment = [],
-        logConfiguration = {
-          logDriver = "awslogs",
-          options = {
-            awslogs-group  = aws_cloudwatch_log_group.this.name,
-            awslogs-region = "eu-central-1",
-          },
-        },
-      }
-  ])
+# resource "aws_alb_listener" "https" {
+#   load_balancer_arn = aws_alb.this.id
+#   port              = 443
+#   protocol          = "HTTPS"
+#   certificate_arn   = var.cert_arn
+#   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01" # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html
 
-  tags = {
-    owner = "self"
-  }
-}
-
-data "aws_ecs_task_definition" "this" {
-  task_definition = aws_ecs_task_definition.this.family
-  depends_on      = [aws_ecs_task_definition.this]
-}
-
-resource "aws_ecs_service" "this" {
-  name    = "test_service"
-  cluster = module.ecs_cluster.ecs_cluster_id
-  task_definition = "${aws_ecs_task_definition.this.family}:${max(
-    aws_ecs_task_definition.this.revision,
-    data.aws_ecs_task_definition.this.revision,
-  )}"
-  # iam_role        = "TODO"
-  # load_balancer
-  desired_count                      = 1
-  deployment_minimum_healthy_percent = 50
-  deployment_maximum_percent         = 200
-
-  ordered_placement_strategy {
-    type  = "spread"
-    field = "attribute:ecs.avaiability-zones"
-  }
-
-  ordered_placement_strategy {
-    type  = "spread"
-    field = "instanceId"
-  }
-
-  ordered_placement_strategy {
-    type  = "binpack"
-    field = "cpu"
-  }
-
-  ordered_placement_strategy {
-    type  = "binpack"
-    field = "memory"
-  }
-
-  tags = {
-    owner = "self"
-  }
-}
+#   default_action {
+#     target_group_arn = aws_alb_target_group.this.id
+#     type             = "forward"
+#   }
+# }
 

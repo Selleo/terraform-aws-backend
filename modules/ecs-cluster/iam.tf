@@ -43,9 +43,7 @@ data "aws_iam_policy_document" "ecs_instance" {
       "ecr:GetAuthorizationToken",
       "ecr:BatchCheckLayerAvailability",
       "ecr:GetDownloadUrlForLayer",
-      "ecr:BatchGetImage",
-      "logs:CreateLogStream",
-      "logs:PutLogEvents"
+      "ecr:BatchGetImage"
     ]
 
     resources = ["*"]

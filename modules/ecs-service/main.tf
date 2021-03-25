@@ -1,12 +1,3 @@
-locals {
-  container_definitions = defaults(var.container_definitions, {
-    desired_count = 1
-    cpu_units     = 256
-    mem_units     = 128
-    envs          = {}
-  })
-}
-
 data "aws_region" "current" {}
 
 resource "aws_cloudwatch_log_group" "this" {
@@ -22,22 +13,22 @@ resource "aws_ecs_task_definition" "this" {
     [
       {
         essential         = true,
-        memoryReservation = local.container_definition.mem_units,
-        cpu               = local.container_definition.cpu_units,
+        memoryReservation = var.container_definition.mem_units,
+        cpu               = var.container_definition.cpu_units,
         name              = var.name,
-        command           = local.container_definition.command,
-        image             = local.container_definition.image,
+        command           = var.container_definition.command,
+        image             = var.container_definition.image,
         mountPoints       = [],
         volumesFrom       = [],
         portMappings = [
           {
-            containerPort = local.container_definition.port,
+            containerPort = var.container_definition.container_port,
             hostPort      = 0,
             protocol      = "tcp",
           },
         ],
         environment = [
-          for k, v in local.container_definition.envs :
+          for k, v in var.container_definition.envs :
           {
             name  = k
             value = v
@@ -68,8 +59,14 @@ resource "aws_ecs_service" "this" {
     aws_ecs_task_definition.this.revision,
     data.aws_ecs_task_definition.this.revision,
   )}"
-  # iam_role        = "TODO"
-  # load_balancer
+  iam_role = aws_iam_role.ecs.arn
+
+  load_balancer {
+    target_group_arn = aws_alb_target_group.this.arn
+    container_name   = var.name
+    container_port   = var.container_definition.container_port
+  }
+
   desired_count                      = var.desired_count
   deployment_minimum_healthy_percent = 50
   deployment_maximum_percent         = 200
@@ -97,14 +94,83 @@ resource "aws_ecs_service" "this" {
   tags = merge({ owner = "self" }, var.tags)
 }
 
-# data "aws_iam_policy_document" "cloudwatch_instance" {
-#   statement {
-#     effect = "Allow"
-#     actions = [
-#         "logs:CreateLogStream",
-#         "logs:PutLogEvents"
-#     ]
-# 
-#     resource = ["*"]
-#   }
-# }
+resource "aws_iam_role" "ecs" {
+  name               = "${var.name}-ecs-role"
+  assume_role_policy = data.aws_iam_policy_document.ecs.json
+
+  tags = merge({ owner = "self" }, var.tags)
+}
+
+data "aws_iam_policy_document" "ecs" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "sts:AssumeRole",
+    ]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role_policy" "cloudwatch" {
+  name   = "${var.name}-role-cloudwatch-policy"
+  role   = var.instance_role
+  policy = data.aws_iam_policy_document.cloudwatch.json
+}
+
+data "aws_iam_policy_document" "cloudwatch" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+
+    resources = ["${aws_cloudwatch_log_group.this.arn}:*"]
+  }
+}
+
+resource "aws_iam_role_policy" "alb" {
+  name   = "${var.name}-role-alb-policy"
+  role   = aws_iam_role.ecs.name
+  policy = data.aws_iam_policy_document.alb.json
+}
+
+data "aws_iam_policy_document" "alb" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "ec2:Describe*",
+      "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+      "elasticloadbalancing:DeregisterTargets",
+      "elasticloadbalancing:Describe*",
+      "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+      "elasticloadbalancing:RegisterTargets"
+    ]
+
+    resources = ["*"]
+  }
+}
+
+resource "aws_alb_target_group" "this" {
+  name                 = var.name
+  port                 = var.container_definition.container_port
+  protocol             = "HTTP"
+  vpc_id               = var.vpc_id
+  deregistration_delay = 30 # draining time
+
+  health_check {
+    path                = "/healthcheck"
+    protocol            = "HTTP"
+    timeout             = 10
+    interval            = 15
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+    matcher             = "200"
+  }
+
+  tags = merge({ owner = "self" }, var.tags)
+}

@@ -12,7 +12,7 @@ resource "aws_launch_configuration" "this" {
   image_id                    = local.ami
   instance_type               = var.instance_type
   key_name                    = var.key_name
-  security_groups             = concat(var.security_groups)
+  security_groups             = concat([aws_security_group.instance_sg.id], var.security_groups)
   associate_public_ip_address = false
   iam_instance_profile        = aws_iam_instance_profile.instance_profile.name
 
@@ -20,7 +20,6 @@ resource "aws_launch_configuration" "this" {
   root_block_device {
     volume_type = "gp2"
     volume_size = 30
-    iops        = "100"
   }
 
   #TODO https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/cloudinit_config
@@ -82,3 +81,31 @@ resource "aws_autoscaling_group" "portal_autoscaling_group" {
   }
 }
 
+resource "aws_security_group" "instance_sg" {
+  description = "controls direct access to application instances"
+  vpc_id      = var.vpc_id
+  name        = "instance_sg"
+
+  tags = {
+    Terraform   = "true"
+    Environment = "test"
+  }
+}
+
+resource "aws_security_group_rule" "ephemeral_port_range" {
+  type                     = "ingress"
+  from_port                = 32768
+  to_port                  = 65535
+  protocol                 = "tcp"
+  source_security_group_id = var.loadbalancer_sg_id
+  security_group_id        = aws_security_group.instance_sg.id
+}
+
+resource "aws_security_group_rule" "allow_all_outbound_ec2_instance" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "all"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.instance_sg.id
+}
