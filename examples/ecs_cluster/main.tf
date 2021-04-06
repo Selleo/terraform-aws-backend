@@ -18,7 +18,7 @@ module "vpc" {
 }
 
 module "loadbalancer" {
-  source = "../../modules/loadbalancer"
+  source = "../../modules/load-balancer"
 
   name       = "ecs-lb"
   vpc_id     = module.vpc.vpc_id
