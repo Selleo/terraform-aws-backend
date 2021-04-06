@@ -12,10 +12,7 @@ resource "aws_security_group" "lb_sg" {
   vpc_id      = var.vpc_id
   name        = "lb-${var.name}"
 
-  tags = {
-    Terraform   = "true"
-    Environment = "test"
-  }
+  tags = merge({ owner = "self" }, var.tags)
 }
 
 resource "aws_security_group_rule" "http" {

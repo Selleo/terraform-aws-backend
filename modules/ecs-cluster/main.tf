@@ -86,10 +86,7 @@ resource "aws_security_group" "instance_sg" {
   vpc_id      = var.vpc_id
   name        = "instance_sg"
 
-  tags = {
-    Terraform   = "true"
-    Environment = "test"
-  }
+  tags = merge({ owner = "self" }, var.tags)
 }
 
 resource "aws_security_group_rule" "ephemeral_port_range" {
