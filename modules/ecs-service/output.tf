@@ -6,7 +6,7 @@ output "service_id" {
   value = aws_ecs_service.this.id
 }
 
-output "task_id" {
+output "task_definition" {
   value = local.task_definition
 }
 

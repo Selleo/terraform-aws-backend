@@ -15,7 +15,8 @@ resource "aws_cloudwatch_log_group" "this" {
 }
 
 resource "aws_ecs_task_definition" "this" {
-  family = "test_task_definition"
+  family = var.name
+
   container_definitions = jsonencode(
     [
       {
