@@ -1,5 +1,12 @@
 data "aws_region" "current" {}
 
+locals {
+  task_definition = "${aws_ecs_task_definition.this.family}:${max(
+    aws_ecs_task_definition.this.revision,
+    data.aws_ecs_task_definition.this.revision,
+  )}"
+}
+
 resource "aws_cloudwatch_log_group" "this" {
   name              = var.name
   retention_in_days = 365
@@ -52,14 +59,12 @@ data "aws_ecs_task_definition" "this" {
   depends_on      = [aws_ecs_task_definition.this]
 }
 
+
 resource "aws_ecs_service" "this" {
-  name    = var.name
-  cluster = var.ecs_cluster_id
-  task_definition = "${aws_ecs_task_definition.this.family}:${max(
-    aws_ecs_task_definition.this.revision,
-    data.aws_ecs_task_definition.this.revision,
-  )}"
-  iam_role = aws_iam_role.ecs.arn
+  name            = var.name
+  cluster         = var.ecs_cluster_id
+  task_definition = local.task_definition
+  iam_role        = aws_iam_role.ecs.arn
 
   load_balancer {
     target_group_arn = aws_alb_target_group.this.arn
