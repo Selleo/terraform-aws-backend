@@ -2,6 +2,12 @@
 
 Collection of Terraform modules for backend app deployment on AWS.
 
+## List of submodules
+
+* [ECS service](https://registry.terraform.io/modules/Selleo/backend/aws/latest/submodules/ecs-service)
+* [ECS cluster](https://registry.terraform.io/modules/Selleo/backend/aws/latest/submodules/ecs-cluster)
+* [Load balancer](https://registry.terraform.io/modules/Selleo/backend/aws/latest/submodules/load-balancer)
+
 ## Maintainers
 
 * Bartłomiej Wójtowicz ([@qbart](https://github.com/qbart)) 
