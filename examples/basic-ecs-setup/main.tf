@@ -17,7 +17,7 @@ module "vpc" {
   }
 }
 
-module "loadbalancer" {
+module "lb" {
   source = "../../modules/load-balancer"
 
   name       = "ecs-lb"
@@ -39,7 +39,7 @@ module "ecs_cluster" {
   subnet_ids         = module.vpc.public_subnets
   instance_type      = "t3.micro"
   security_groups    = []
-  loadbalancer_sg_id = module.loadbalancer.loadbalancer_sg_id
+  loadbalancer_sg_id = module.lb.loadbalancer_sg_id
   autoscaling_group = {
     min_size         = 1
     max_size         = 1
@@ -65,14 +65,10 @@ module "ecs_service" {
       "APP_ENV" = "production"
     }
   }
-
-  depends_on = [
-    module.loadbalancer
-  ]
 }
 
 resource "aws_alb_listener" "http" {
-  load_balancer_arn = module.loadbalancer.loadbalancer_id
+  load_balancer_arn = module.lb.loadbalancer_id
   port              = 80
   protocol          = "HTTP"
 
