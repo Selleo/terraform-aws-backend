@@ -4,6 +4,12 @@ resource "aws_alb" "this" {
   security_groups = [aws_security_group.lb_sg.id]
   idle_timeout    = 1800
 
+  access_logs {
+    bucket  = var.access_logs.bucket
+    prefix  = var.access_logs.prefix
+    enabled = var.access_logs.enabled
+  }
+
   tags = merge({ owner = "self" }, var.tags)
 }
 

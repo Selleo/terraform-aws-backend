@@ -22,3 +22,19 @@ variable "tags" {
   description = "Additional tags attached to resources."
   default     = {}
 }
+
+variable "access_logs" {
+  description = "Access logs config for load balancer."
+
+  type = object({
+    bucket  = string
+    prefix  = string
+    enabled = bool
+  })
+
+  default = {
+    bucket  = ""
+    prefix  = ""
+    enabled = false
+  }
+}
