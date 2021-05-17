@@ -44,3 +44,9 @@ variable "tags" {
   description = "Additional tags attached to resources."
   default     = {}
 }
+
+variable "health_check_path" {
+  type        = string
+  description = "Healt check path for ALB target group."
+  default     = "/healthcheck"
+}

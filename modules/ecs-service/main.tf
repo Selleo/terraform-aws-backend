@@ -169,7 +169,7 @@ resource "aws_alb_target_group" "this" {
   deregistration_delay = 30 # draining time
 
   health_check {
-    path                = "/healthcheck"
+    path                = var.health_check_path
     protocol            = "HTTP"
     timeout             = 10
     interval            = 15
