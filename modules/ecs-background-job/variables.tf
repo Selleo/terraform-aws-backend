@@ -38,3 +38,9 @@ variable "tags" {
   description = "Additional tags attached to resources."
   default     = {}
 }
+
+variable "log_retention_in_days" {
+  type        = string
+  description = "Log retention in days for Cloudwatch."
+  default     = 365
+}

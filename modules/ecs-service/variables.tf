@@ -50,3 +50,9 @@ variable "health_check_path" {
   description = "Healt check path for ALB target group."
   default     = "/healthcheck"
 }
+
+variable "log_retention_in_days" {
+  type        = string
+  description = "Log retention in days for Cloudwatch."
+  default     = 365
+}
