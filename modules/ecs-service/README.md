@@ -111,7 +111,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_lb_target_group_id"></a> [lb\_target\_group\_id](#output\_lb\_target\_group\_id) | n/a |
-| <a name="output_service_id"></a> [service\_id](#output\_service\_id) | n/a |
-| <a name="output_task_definition"></a> [task\_definition](#output\_task\_definition) | n/a |
-| <a name="output_task_family"></a> [task\_family](#output\_task\_family) | n/a |
+| <a name="output_lb_target_group_id"></a> [lb\_target\_group\_id](#output\_lb\_target\_group\_id) | ARN of the Target Group. |
+| <a name="output_service_id"></a> [service\_id](#output\_service\_id) | ARN that identifies the service. |
+| <a name="output_task_definition"></a> [task\_definition](#output\_task\_definition) | Latest task definition (family:revision). |
+| <a name="output_task_family"></a> [task\_family](#output\_task\_family) | ECS task family. |
