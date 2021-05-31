@@ -1,6 +1,6 @@
 # Terraform AWS backend module
 
-Collection of Terraform modules for backend app deployment on AWS.
+Collection of Terraform modules for backend app deployment on AWS. See [Changelog](https://github.com/Selleo/terraform-aws-backend/blob/main/CHANGELOG.md) for release information.
 
 ## List of submodules
 
@@ -10,6 +10,8 @@ Collection of Terraform modules for backend app deployment on AWS.
 * [Load balancer](https://registry.terraform.io/modules/Selleo/backend/aws/latest/submodules/load-balancer)
 
 ## Maintainers
+
+See [Dev document](https://github.com/Selleo/terraform-aws-backend/blob/main/DEV.md) for development instructions.
 
 * Bartłomiej Wójtowicz ([@qbart](https://github.com/qbart)) 
 * Łukasz Pawlik ([@LukeP91](https://github.com/LukeP91))
