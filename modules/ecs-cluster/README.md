@@ -9,7 +9,7 @@ Define cluster:
 ```tf
 module "ecs_cluster" {
   source  = "Selleo/backend/aws//modules/ecs-cluster"
-  version = "0.1.3"
+  version = "0.2.0"
 
   name_prefix        = "my-cluster"
   region             = "eu-central-1"

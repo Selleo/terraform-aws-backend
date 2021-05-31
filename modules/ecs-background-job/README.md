@@ -9,7 +9,7 @@ Define background job:
 ```tf
 module "ecs_background_job" {
   source  = "Selleo/backend/aws//modules/ecs-background-job"
-  version = "0.1.8"
+  version = "0.2.0"
 
   name           = "shoryuken"  
   ecs_cluster_id = module.ecs_cluster.ecs_cluster_id
@@ -19,10 +19,10 @@ module "ecs_background_job" {
   container_definition = {
     cpu_units      = 256
     mem_units      = 512
-    command        = ["bundle", "exec", "ruby", "main.rb"],
-    image          = "qbart/hello-ruby-sinatra:latest",
-    envs = {
-      "APP_ENV" = "production"
+    command        = ["bundle", "exec", "shoryuken", "-C", "config/shoryuken.yml", "-R"]
+    image          = "${aws_ecr_repository.your_repo.repository_url}:latest"
+    envs = { 
+      MY_ENV = "sth"
     }
   }
 }

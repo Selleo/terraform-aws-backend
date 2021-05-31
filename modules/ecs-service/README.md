@@ -9,7 +9,7 @@ Define service:
 ```tf
 module "ecs_service" {
   source  = "Selleo/backend/aws//modules/ecs-service"
-  version = "0.1.3"
+  version = "0.2.0"
 
   name           = "rails-api"
   vpc_id         = module.vpc.vpc_id
