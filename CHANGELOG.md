@@ -4,6 +4,7 @@
 
 * Add generated documentation
 * Add additional outputs
+* Fix SG name for ECS cluser (backward compatibility flag)
 
 # 0.1.1 - 0.2.0
 

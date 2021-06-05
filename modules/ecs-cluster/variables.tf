@@ -76,3 +76,8 @@ variable "ecs_loglevel" {
   }
 }
 
+variable "backward_compatibility_single_instance_sg_per_vpc" {
+  type        = bool
+  default     = false
+  description = "Use backward compatibility mode for security group name. If set to `True` default SG will be named `instance_sg`, otherwsie random prefix is added."
+}

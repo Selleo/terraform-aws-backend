@@ -84,7 +84,7 @@ resource "aws_autoscaling_group" "portal_autoscaling_group" {
 resource "aws_security_group" "instance_sg" {
   description = "controls direct access to application instances"
   vpc_id      = var.vpc_id
-  name        = "instance_sg"
+  name        = var.backward_compatibility_single_instance_sg_per_vpc ? "instance_sg" : "${random_id.prefix.hex}-instance"
 
   tags = merge({ owner = "self" }, var.tags)
 }

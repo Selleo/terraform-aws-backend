@@ -61,8 +61,8 @@ Module defines permissions for EC2 instance that allows managing application lif
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 3.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.44.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.1.0 |
 
 ## Modules
 
@@ -94,6 +94,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_ami"></a> [ami](#input\_ami) | Image ID for Autoscaling group. If left blank, latest ECS-optimized version will be used. | `string` | `""` | no |
 | <a name="input_autoscaling_group"></a> [autoscaling\_group](#input\_autoscaling\_group) | Autoscaling group configuration. | <pre>object({<br>    min_size         = number<br>    max_size         = number<br>    desired_capacity = number<br>  })</pre> | n/a | yes |
+| <a name="input_backward_compatibility_single_instance_sg_per_vpc"></a> [backward\_compatibility\_single\_instance\_sg\_per\_vpc](#input\_backward\_compatibility\_single\_instance\_sg\_per\_vpc) | Use backward compatibility mode for security group name. If set to `True` default SG will be named `instance_sg`, otherwsie random prefix is added. | `bool` | `false` | no |
 | <a name="input_ecs_loglevel"></a> [ecs\_loglevel](#input\_ecs\_loglevel) | ECS Cluster log level. | `string` | `"info"` | no |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | EC2 instance type i.e. t3.medium. | `string` | n/a | yes |
 | <a name="input_key_name"></a> [key\_name](#input\_key\_name) | Key pair name for SSH access. | `string` | `""` | no |
