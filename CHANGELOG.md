@@ -3,6 +3,7 @@
 # 0.2.1 - ...
 
 * Add generated documentation
+* Add additional outputs
 
 # 0.1.1 - 0.2.0
 

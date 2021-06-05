@@ -7,3 +7,8 @@ output "instance_role" {
   value       = aws_iam_role.instance_role.id
   description = "IAM role that is attached to EC2 instances."
 }
+
+output "prefix" {
+  value       = random_id.prefix.hex
+  description = "Random prefix to use for associated resources."
+}

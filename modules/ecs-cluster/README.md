@@ -111,3 +111,4 @@ No modules.
 |------|-------------|
 | <a name="output_ecs_cluster_id"></a> [ecs\_cluster\_id](#output\_ecs\_cluster\_id) | ECS cluster ID (contains randomized suffix). |
 | <a name="output_instance_role"></a> [instance\_role](#output\_instance\_role) | IAM role that is attached to EC2 instances. |
+| <a name="output_prefix"></a> [prefix](#output\_prefix) | Random prefix to use for associated resources. |
