@@ -13,13 +13,12 @@ resource "aws_launch_configuration" "this" {
   instance_type               = var.instance_type
   key_name                    = var.key_name
   security_groups             = concat([aws_security_group.instance_sg.id], var.security_groups)
-  associate_public_ip_address = false
+  associate_public_ip_address = var.associate_public_ip_address
   iam_instance_profile        = aws_iam_instance_profile.instance_profile.name
 
-  # TODO: add to var 
   root_block_device {
-    volume_type = "gp2"
-    volume_size = 30
+    volume_type = var.root_block_configuration.volume_type
+    volume_size = var.root_block_configuration.volume_size
   }
 
   #TODO https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/cloudinit_config

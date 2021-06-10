@@ -81,3 +81,21 @@ variable "backward_compatibility_single_instance_sg_per_vpc" {
   default     = false
   description = "Use backward compatibility mode for security group name. If set to `True` default SG will be named `instance_sg`, otherwsie random prefix is added."
 }
+
+variable "associate_public_ip_address" {
+  type        = bool
+  default     = false
+  description = "Associate a public ip address with an instance in a VPC."
+}
+
+variable "root_block_configuration" {
+  type = object({
+    volume_type = string
+    volume_size = number
+  })
+  default = {
+    volume_type = "gp2"
+    volume_size = 30
+  }
+  description = "Configuration for root block device block."
+}

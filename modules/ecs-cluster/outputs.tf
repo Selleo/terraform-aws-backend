@@ -12,3 +12,8 @@ output "prefix" {
   value       = random_id.prefix.hex
   description = "Random prefix to use for associated resources."
 }
+
+output "instance_security_group_id" {
+  value       = aws_security_group.instance_sg.id
+  description = "ID of the security group attached to an instance."
+}
