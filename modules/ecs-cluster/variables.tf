@@ -65,6 +65,12 @@ variable "security_groups" {
   default     = []
 }
 
+variable "enable_container_insights" {
+  type        = bool
+  description = "Enable container insights for the cluster."
+  default     = false
+}
+
 variable "ecs_loglevel" {
   type        = string
   description = "ECS Cluster log level."

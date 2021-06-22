@@ -38,6 +38,11 @@ resource "aws_launch_configuration" "this" {
 resource "aws_ecs_cluster" "this" {
   name = random_id.prefix.hex
 
+  setting {
+    name  = "containerInsights"
+    value = var.enable_container_insights ? "enabled" : "disabled"
+  }
+
   tags = merge({ owner = "self" }, var.tags)
 }
 
@@ -49,7 +54,7 @@ resource "aws_placement_group" "this" {
 }
 
 resource "aws_autoscaling_group" "portal_autoscaling_group" {
-  name                 = aws_launch_configuration.this.name
+  name                 = random_id.prefix.hex
   launch_configuration = aws_launch_configuration.this.name
   vpc_zone_identifier  = var.subnet_ids
 
