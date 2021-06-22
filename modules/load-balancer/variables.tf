@@ -17,6 +17,30 @@ variable "subnet_ids" {
 
 # optional
 
+variable "allow_http" {
+  type        = bool
+  description = "Create ingress rule for port 80."
+  default     = true
+}
+
+variable "allow_https" {
+  type        = bool
+  description = "Create ingress rule for port 443."
+  default     = true
+}
+
+variable "allow_all_outbound" {
+  type        = bool
+  description = "Create ingress rule for port 443."
+  default     = true
+}
+
+variable "cidr_blocks" {
+  type        = list(string)
+  description = "CIDR blocks used for ingress rules."
+  default     = ["0.0.0.0/0"]
+}
+
 variable "tags" {
   type        = map(string)
   description = "Additional tags attached to resources."

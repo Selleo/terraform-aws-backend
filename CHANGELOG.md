@@ -5,6 +5,7 @@
 * Add generated documentation
 * Add additional outputs
 * Fix SG name for ECS cluser (backward compatibility flag)
+* Allow to customize ingress/egress rules for LB
 
 # 0.1.1 - 0.2.0
 

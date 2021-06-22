@@ -8,13 +8,13 @@ In order to use this module you need to have networking set up - you can use off
 Define application load balancer:
 
 ```tf
-module "lb" {
+module "load_balancer" {
   source  = "Selleo/backend/aws//modules/load-balancer"
-  version = "0.2.0"
+  version = "0.2.6"
 
   name       = "ecs-lb"
-  vpc_id     = "vpc-1234"
-  subnet_ids = ["10.0.101.0/24", "10.0.102.0/24"]
+  vpc_id     = module.vpc.vpc_id          # "vpc-1234"
+  subnet_ids = module.vpc.public_subnets  # ["10.0.101.0/24", "10.0.102.0/24"] 
 }
 ```
 
@@ -52,6 +52,10 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_access_logs"></a> [access\_logs](#input\_access\_logs) | Access logs config for load balancer. | <pre>object({<br>    bucket  = string<br>    prefix  = string<br>    enabled = bool<br>  })</pre> | <pre>{<br>  "bucket": "",<br>  "enabled": false,<br>  "prefix": ""<br>}</pre> | no |
+| <a name="input_allow_all_outbound"></a> [allow\_all\_outbound](#input\_allow\_all\_outbound) | Create ingress rule for port 443. | `bool` | `true` | no |
+| <a name="input_allow_http"></a> [allow\_http](#input\_allow\_http) | Create ingress rule for port 80. | `bool` | `true` | no |
+| <a name="input_allow_https"></a> [allow\_https](#input\_allow\_https) | Create ingress rule for port 443. | `bool` | `true` | no |
+| <a name="input_cidr_blocks"></a> [cidr\_blocks](#input\_cidr\_blocks) | CIDR blocks used for ingress rules. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
 | <a name="input_name"></a> [name](#input\_name) | Load balancer name. | `string` | n/a | yes |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of AWS subent IDs for Autoscaling group. | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Additional tags attached to resources. | `map(string)` | `{}` | no |
