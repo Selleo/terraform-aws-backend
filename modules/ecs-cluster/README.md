@@ -9,7 +9,7 @@ Define cluster:
 ```tf
 module "ecs_cluster" {
   source  = "Selleo/backend/aws//modules/ecs-cluster"
-  version = "0.2.0"
+  version = "0.3.0"
 
   name_prefix        = "my-cluster"
   region             = "eu-central-1"
@@ -61,8 +61,8 @@ Module defines permissions for EC2 instance that allows managing application lif
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.44.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.1.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 3.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
 ## Modules
 
@@ -93,14 +93,17 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_ami"></a> [ami](#input\_ami) | Image ID for Autoscaling group. If left blank, latest ECS-optimized version will be used. | `string` | `""` | no |
+| <a name="input_associate_public_ip_address"></a> [associate\_public\_ip\_address](#input\_associate\_public\_ip\_address) | Associate a public ip address with an instance in a VPC. | `bool` | `false` | no |
 | <a name="input_autoscaling_group"></a> [autoscaling\_group](#input\_autoscaling\_group) | Autoscaling group configuration. | <pre>object({<br>    min_size         = number<br>    max_size         = number<br>    desired_capacity = number<br>  })</pre> | n/a | yes |
 | <a name="input_backward_compatibility_single_instance_sg_per_vpc"></a> [backward\_compatibility\_single\_instance\_sg\_per\_vpc](#input\_backward\_compatibility\_single\_instance\_sg\_per\_vpc) | Use backward compatibility mode for security group name. If set to `True` default SG will be named `instance_sg`, otherwsie random prefix is added. | `bool` | `false` | no |
 | <a name="input_ecs_loglevel"></a> [ecs\_loglevel](#input\_ecs\_loglevel) | ECS Cluster log level. | `string` | `"info"` | no |
+| <a name="input_enable_container_insights"></a> [enable\_container\_insights](#input\_enable\_container\_insights) | Enable container insights for the cluster. | `bool` | `false` | no |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | EC2 instance type i.e. t3.medium. | `string` | n/a | yes |
 | <a name="input_key_name"></a> [key\_name](#input\_key\_name) | Key pair name for SSH access. | `string` | `""` | no |
 | <a name="input_loadbalancer_sg_id"></a> [loadbalancer\_sg\_id](#input\_loadbalancer\_sg\_id) | LoadBalancer security group id. | `string` | n/a | yes |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | Name prefix (hyphen suffix should be skipped). | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | AWS region for cluster. | `string` | n/a | yes |
+| <a name="input_root_block_configuration"></a> [root\_block\_configuration](#input\_root\_block\_configuration) | Configuration for root block device block. | <pre>object({<br>    volume_type = string<br>    volume_size = number<br>  })</pre> | <pre>{<br>  "volume_size": 30,<br>  "volume_type": "gp2"<br>}</pre> | no |
 | <a name="input_security_groups"></a> [security\_groups](#input\_security\_groups) | List of security groups attached to launch configuration. | `list(string)` | `[]` | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of AWS subent IDs for Autoscaling group. | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Additional tags attached to resources. | `map(string)` | `{}` | no |
@@ -112,4 +115,5 @@ No modules.
 |------|-------------|
 | <a name="output_ecs_cluster_id"></a> [ecs\_cluster\_id](#output\_ecs\_cluster\_id) | ECS cluster ID (contains randomized suffix). |
 | <a name="output_instance_role"></a> [instance\_role](#output\_instance\_role) | IAM role that is attached to EC2 instances. |
+| <a name="output_instance_security_group_id"></a> [instance\_security\_group\_id](#output\_instance\_security\_group\_id) | ID of the security group attached to an instance. |
 | <a name="output_prefix"></a> [prefix](#output\_prefix) | Random prefix to use for associated resources. |

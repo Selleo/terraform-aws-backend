@@ -9,7 +9,7 @@ Define background job:
 ```tf
 module "ecs_background_job" {
   source  = "Selleo/backend/aws//modules/ecs-background-job"
-  version = "0.2.0"
+  version = "0.3.0"
 
   name           = "shoryuken"  
   ecs_cluster_id = module.ecs_cluster.ecs_cluster_id

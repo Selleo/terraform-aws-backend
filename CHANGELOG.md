@@ -1,6 +1,10 @@
 # Changelog
 
-# 0.2.1 - ...
+# 0.3.0 - ...
+
+* Breaking change: Changing launch configuration will not force ASG to be recreated.
+
+# 0.2.1 - 0.2.6
 
 * Add generated documentation
 * Add additional outputs

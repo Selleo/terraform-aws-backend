@@ -10,7 +10,7 @@ Define application load balancer:
 ```tf
 module "load_balancer" {
   source  = "Selleo/backend/aws//modules/load-balancer"
-  version = "0.2.6"
+  version = "0.3.0"
 
   name       = "ecs-lb"
   vpc_id     = module.vpc.vpc_id          # "vpc-1234"
