@@ -21,14 +21,7 @@ resource "aws_launch_configuration" "this" {
     volume_size = var.root_block_configuration.volume_size
   }
 
-  #TODO https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/cloudinit_config
-
-  user_data = templatefile("${path.module}/scripts/user_data.sh.tpl",
-    {
-      ecs_cluster  = aws_ecs_cluster.this.name,
-      ecs_loglevel = var.ecs_loglevel
-    }
-  )
+  user_data_base64 = data.cloudinit_config.this.rendered
 
   lifecycle {
     create_before_destroy = true
@@ -109,4 +102,29 @@ resource "aws_security_group_rule" "allow_all_outbound_ec2_instance" {
   protocol          = "all"
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.instance_sg.id
+}
+
+data "cloudinit_config" "this" {
+  gzip          = true
+  base64_encode = true
+
+  part {
+    filename     = "ecs-init.sh"
+    content_type = "text/x-shellscript"
+    content = templatefile("${path.module}/scripts/user_data.sh.tpl",
+      {
+        ecs_cluster  = aws_ecs_cluster.this.name,
+        ecs_loglevel = var.ecs_loglevel
+      }
+    )
+  }
+
+  dynamic "part" {
+    for_each = var.cloudinit_parts
+    content {
+      filename     = part.value["filename"]
+      content      = part.value["content"]
+      content_type = part.value["content_type"]
+    }
+  }
 }

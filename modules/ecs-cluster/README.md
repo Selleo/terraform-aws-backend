@@ -9,13 +9,13 @@ Define cluster:
 ```tf
 module "ecs_cluster" {
   source  = "Selleo/backend/aws//modules/ecs-cluster"
-  version = "0.3.0"
+  version = "0.3.1"
 
   name_prefix        = "my-cluster"
-  region             = "eu-central-1"
+  region             = "eu-central-1" 
   vpc_id             = module.vpc.vpc_id
   subnet_ids         = module.vpc.public_subnets
-  instance_type      = "t3.micro"
+  instance_type      = "t3.small"
   security_groups    = []
   loadbalancer_sg_id = module.lb.loadbalancer_sg_id
 
@@ -24,6 +24,26 @@ module "ecs_cluster" {
     max_size         = 2
     desired_capacity = 1
   }
+
+}
+```
+
+Optional cloudinit config:
+```tf
+module "ecs_cluster" {
+  # ...
+  cloudinit_parts = [
+    {
+      filename     = "hello.sh"
+      content_type = "text/x-shellscript"
+      content      = <<SH
+  #!/usr/bin/env bash
+
+  echo "Hello World" > /home/ec2-user/hello
+  SH
+    }
+  ]
+  # ...
 }
 ```
 
@@ -62,6 +82,7 @@ Module defines permissions for EC2 instance that allows managing application lif
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 3.0 |
+| <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | n/a |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
 ## Modules
@@ -87,6 +108,7 @@ No modules.
 | [aws_iam_policy_document.ecs_instance](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.instance_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_vpc.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
+| [cloudinit_config.this](https://registry.terraform.io/providers/hashicorp/cloudinit/latest/docs/data-sources/config) | data source |
 
 ## Inputs
 
@@ -96,6 +118,7 @@ No modules.
 | <a name="input_associate_public_ip_address"></a> [associate\_public\_ip\_address](#input\_associate\_public\_ip\_address) | Associate a public ip address with an instance in a VPC. | `bool` | `false` | no |
 | <a name="input_autoscaling_group"></a> [autoscaling\_group](#input\_autoscaling\_group) | Autoscaling group configuration. | <pre>object({<br>    min_size         = number<br>    max_size         = number<br>    desired_capacity = number<br>  })</pre> | n/a | yes |
 | <a name="input_backward_compatibility_single_instance_sg_per_vpc"></a> [backward\_compatibility\_single\_instance\_sg\_per\_vpc](#input\_backward\_compatibility\_single\_instance\_sg\_per\_vpc) | Use backward compatibility mode for security group name. If set to `True` default SG will be named `instance_sg`, otherwsie random prefix is added. | `bool` | `false` | no |
+| <a name="input_cloudinit_parts"></a> [cloudinit\_parts](#input\_cloudinit\_parts) | Parts for cloud-init config that are added to the final MIME document. | <pre>list(object({<br>    content      = string<br>    filename     = string<br>    content_type = string<br>  }))</pre> | `[]` | no |
 | <a name="input_ecs_loglevel"></a> [ecs\_loglevel](#input\_ecs\_loglevel) | ECS Cluster log level. | `string` | `"info"` | no |
 | <a name="input_enable_container_insights"></a> [enable\_container\_insights](#input\_enable\_container\_insights) | Enable container insights for the cluster. | `bool` | `false` | no |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | EC2 instance type i.e. t3.medium. | `string` | n/a | yes |

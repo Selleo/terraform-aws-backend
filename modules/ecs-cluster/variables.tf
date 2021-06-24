@@ -65,6 +65,16 @@ variable "security_groups" {
   default     = []
 }
 
+variable "cloudinit_parts" {
+  type = list(object({
+    content      = string
+    filename     = string
+    content_type = string
+  }))
+  description = "Parts for cloud-init config that are added to the final MIME document."
+  default     = []
+}
+
 variable "enable_container_insights" {
   type        = bool
   description = "Enable container insights for the cluster."
