@@ -11,7 +11,7 @@ resource "aws_cloudwatch_log_group" "this" {
   name              = var.name
   retention_in_days = var.log_retention_in_days
 
-  tags = merge({ owner = "self" }, var.tags)
+  tags = var.tags
 }
 
 resource "aws_ecs_task_definition" "this" {
@@ -52,7 +52,7 @@ resource "aws_ecs_task_definition" "this" {
       }
   ])
 
-  tags = merge({ owner = "self" }, var.tags)
+  tags = var.tags
 }
 
 data "aws_ecs_task_definition" "this" {
@@ -97,14 +97,14 @@ resource "aws_ecs_service" "this" {
     field = "memory"
   }
 
-  tags = merge({ owner = "self" }, var.tags)
+  tags = var.tags
 }
 
 resource "aws_iam_role" "ecs" {
   name               = "${var.name}-ecs-role"
   assume_role_policy = data.aws_iam_policy_document.ecs.json
 
-  tags = merge({ owner = "self" }, var.tags)
+  tags = var.tags
 }
 
 data "aws_iam_policy_document" "ecs" {
@@ -169,14 +169,14 @@ resource "aws_alb_target_group" "this" {
   deregistration_delay = 30 # draining time
 
   health_check {
-    path                = var.health_check_path
+    path                = var.health_check.path
     protocol            = "HTTP"
     timeout             = 10
     interval            = 15
     healthy_threshold   = 3
     unhealthy_threshold = 3
-    matcher             = "200"
+    matcher             = var.health_check.matcher
   }
 
-  tags = merge({ owner = "self" }, var.tags)
+  tags = var.tags
 }

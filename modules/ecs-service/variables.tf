@@ -45,10 +45,16 @@ variable "tags" {
   default     = {}
 }
 
-variable "health_check_path" {
-  type        = string
-  description = "Healt check path for ALB target group."
-  default     = "/healthcheck"
+variable "health_check" {
+  type = object({
+    path    = string
+    matcher = string
+  })
+  description = "Healt check config for ALB target group."
+  default = {
+    path    = "/"
+    matcher = "200"
+  }
 }
 
 variable "log_retention_in_days" {

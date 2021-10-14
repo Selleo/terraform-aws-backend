@@ -9,7 +9,7 @@ Define cluster:
 ```tf
 module "ecs_cluster" {
   source  = "Selleo/backend/aws//modules/ecs-cluster"
-  version = "0.4.0"
+  version = "0.5.0"
 
   name_prefix        = "my-cluster"
   region             = "eu-central-1" 
@@ -117,7 +117,6 @@ No modules.
 | <a name="input_ami"></a> [ami](#input\_ami) | Image ID for Autoscaling group. If left blank, latest ECS-optimized version will be used. | `string` | `""` | no |
 | <a name="input_associate_public_ip_address"></a> [associate\_public\_ip\_address](#input\_associate\_public\_ip\_address) | Associate a public ip address with an instance in a VPC. | `bool` | `false` | no |
 | <a name="input_autoscaling_group"></a> [autoscaling\_group](#input\_autoscaling\_group) | Autoscaling group configuration. | <pre>object({<br>    min_size         = number<br>    max_size         = number<br>    desired_capacity = number<br>  })</pre> | n/a | yes |
-| <a name="input_backward_compatibility_single_instance_sg_per_vpc"></a> [backward\_compatibility\_single\_instance\_sg\_per\_vpc](#input\_backward\_compatibility\_single\_instance\_sg\_per\_vpc) | Use backward compatibility mode for security group name. If set to `True` default SG will be named `instance_sg`, otherwsie random prefix is added. | `bool` | `false` | no |
 | <a name="input_cloudinit_parts"></a> [cloudinit\_parts](#input\_cloudinit\_parts) | Parts for cloud-init config that are added to the final MIME document. | <pre>list(object({<br>    content      = string<br>    filename     = string<br>    content_type = string<br>  }))</pre> | `[]` | no |
 | <a name="input_ecs_loglevel"></a> [ecs\_loglevel](#input\_ecs\_loglevel) | ECS Cluster log level. | `string` | `"info"` | no |
 | <a name="input_enable_container_insights"></a> [enable\_container\_insights](#input\_enable\_container\_insights) | Enable container insights for the cluster. | `bool` | `false` | no |

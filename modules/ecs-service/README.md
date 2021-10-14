@@ -44,7 +44,7 @@ Module creates a log group that is used by ECS service task.
 ### ECS service with task definition
 
 Module configures ECS service with task that runs docker image.
-Task is connected to load balancer using target group with default HTTP healthcheck at `/healthcheck`.
+Task is connected to load balancer using target group with default HTTP healthcheck at `/`.
 Task definition uses dynamic port mapping - you define container port and AWS will assign host port from ephemeral range.
 
 Currently placement strategy is configured as follows:
@@ -100,7 +100,7 @@ No modules.
 | <a name="input_container_definition"></a> [container\_definition](#input\_container\_definition) | Service container configuration. | <pre>object({<br>    cpu_units      = number<br>    mem_units      = number<br>    command        = list(string)<br>    image          = string<br>    container_port = number<br>    envs           = map(string)<br>  })</pre> | n/a | yes |
 | <a name="input_desired_count"></a> [desired\_count](#input\_desired\_count) | Desired task count. | `number` | n/a | yes |
 | <a name="input_ecs_cluster_id"></a> [ecs\_cluster\_id](#input\_ecs\_cluster\_id) | ECS Cluster id. | `string` | n/a | yes |
-| <a name="input_health_check_path"></a> [health\_check\_path](#input\_health\_check\_path) | Healt check path for ALB target group. | `string` | `"/healthcheck"` | no |
+| <a name="input_health_check"></a> [health\_check](#input\_health\_check) | Healt check config for ALB target group. | <pre>object({<br>    path    = string<br>    matcher = string<br>  })</pre> | <pre>{<br>  "matcher": "200",<br>  "path": "/"<br>}</pre> | no |
 | <a name="input_instance_role"></a> [instance\_role](#input\_instance\_role) | EC2 instance role. | `string` | n/a | yes |
 | <a name="input_log_retention_in_days"></a> [log\_retention\_in\_days](#input\_log\_retention\_in\_days) | Log retention in days for Cloudwatch. | `string` | `365` | no |
 | <a name="input_name"></a> [name](#input\_name) | ECS Service name. | `string` | n/a | yes |

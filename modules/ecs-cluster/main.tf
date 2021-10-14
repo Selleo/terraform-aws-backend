@@ -36,14 +36,14 @@ resource "aws_ecs_cluster" "this" {
     value = var.enable_container_insights ? "enabled" : "disabled"
   }
 
-  tags = merge({ owner = "self" }, var.tags)
+  tags = var.tags
 }
 
 resource "aws_placement_group" "this" {
   name     = random_id.prefix.hex
   strategy = "spread" # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html
 
-  tags = merge({ owner = "self" }, var.tags)
+  tags = var.tags
 }
 
 resource "aws_autoscaling_group" "portal_autoscaling_group" {
@@ -64,7 +64,7 @@ resource "aws_autoscaling_group" "portal_autoscaling_group" {
   health_check_type         = "EC2"
 
   tags = [
-    for k, v in merge({ owner = "self" }, var.tags) : {
+    for k, v in var.tags : {
       key                 = k
       value               = v
       propagate_at_launch = true
@@ -79,11 +79,11 @@ resource "aws_autoscaling_group" "portal_autoscaling_group" {
 }
 
 resource "aws_security_group" "instance_sg" {
-  description = "controls direct access to application instances"
+  description = "Controls direct access to application instances"
   vpc_id      = var.vpc_id
-  name        = var.backward_compatibility_single_instance_sg_per_vpc ? "instance_sg" : "${random_id.prefix.hex}-instance"
+  name        = "${random_id.prefix.hex}-instance"
 
-  tags = merge({ owner = "self" }, var.tags)
+  tags = var.tags
 }
 
 resource "aws_security_group_rule" "ephemeral_port_range" {

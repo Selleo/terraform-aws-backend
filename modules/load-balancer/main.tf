@@ -10,7 +10,7 @@ resource "aws_alb" "this" {
     enabled = var.access_logs.enabled
   }
 
-  tags = merge({ owner = "self" }, var.tags)
+  tags = var.tags
 }
 
 resource "aws_security_group" "lb_sg" {
@@ -18,7 +18,7 @@ resource "aws_security_group" "lb_sg" {
   vpc_id      = var.vpc_id
   name        = "lb-${var.name}"
 
-  tags = merge({ owner = "self" }, var.tags)
+  tags = var.tags
 }
 
 resource "aws_security_group_rule" "http" {

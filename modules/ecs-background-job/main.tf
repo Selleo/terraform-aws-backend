@@ -39,7 +39,7 @@ resource "aws_ecs_task_definition" "this" {
       }
   ])
 
-  tags = merge({ owner = "self" }, var.tags)
+  tags = var.tags
 }
 
 data "aws_ecs_task_definition" "this" {
@@ -76,7 +76,7 @@ resource "aws_ecs_service" "this" {
     field = "cpu"
   }
 
-  tags = merge({ owner = "self" }, var.tags)
+  tags = var.tags
 }
 
 # logs
@@ -85,7 +85,7 @@ resource "aws_cloudwatch_log_group" "this" {
   name              = var.name
   retention_in_days = var.log_retention_in_days
 
-  tags = merge({ owner = "self" }, var.tags)
+  tags = var.tags
 }
 
 resource "aws_iam_role_policy" "cloudwatch" {
