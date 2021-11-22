@@ -64,7 +64,7 @@ resource "aws_autoscaling_group" "portal_autoscaling_group" {
   health_check_type         = "EC2"
 
   tags = [
-    for k, v in var.tags : {
+    for k, v in merge({Name: random_id.prefix.hex}, var.tags) : {
       key                 = k
       value               = v
       propagate_at_launch = true
