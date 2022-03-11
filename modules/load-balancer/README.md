@@ -10,7 +10,7 @@ Define application load balancer:
 ```tf
 module "load_balancer" {
   source  = "Selleo/backend/aws//modules/load-balancer"
-  version = "0.3.0"
+  version = "0.6.0"
 
   name       = "ecs-lb"
   vpc_id     = module.vpc.vpc_id          # "vpc-1234"
@@ -24,14 +24,14 @@ For more details and options see source files.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.14.5 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 3.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 3.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.0 |
 
 ## Modules
 

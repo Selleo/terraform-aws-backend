@@ -9,7 +9,7 @@ Define service:
 ```tf
 module "ecs_service" {
   source  = "Selleo/backend/aws//modules/ecs-service"
-  version = "0.3.0"
+  version = "0.6.0"
 
   name           = "rails-api"
   vpc_id         = module.vpc.vpc_id
@@ -63,14 +63,14 @@ Additionally it creates a policy for instance role for logging.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.14.5 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 3.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 3.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.0 |
 
 ## Modules
 
