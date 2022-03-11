@@ -63,13 +63,20 @@ resource "aws_autoscaling_group" "portal_autoscaling_group" {
   health_check_grace_period = 15
   health_check_type         = "EC2"
 
-  tags = [
-    for k, v in merge({Name: random_id.prefix.hex}, var.tags) : {
-      key                 = k
-      value               = v
+  tag {
+    key                 = "Name"
+    value               = random_id.prefix.hex
+    propagate_at_launch = true
+  }
+
+  dynamic "tag" {
+    for_each = var.tags
+    content {
+      key                 = tag.key
+      value               = tag.value
       propagate_at_launch = true
     }
-  ]
+  }
 
   force_delete = false
 
