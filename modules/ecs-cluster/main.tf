@@ -69,6 +69,12 @@ resource "aws_autoscaling_group" "portal_autoscaling_group" {
     propagate_at_launch = true
   }
 
+  tag {
+    key                 = var.ssm_tag_key
+    value               = var.ssm_tag_value
+    propagate_at_launch = true
+  }
+
   dynamic "tag" {
     for_each = var.tags
     content {

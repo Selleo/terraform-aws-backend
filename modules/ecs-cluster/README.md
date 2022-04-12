@@ -55,6 +55,8 @@ No modules.
 | <a name="input_region"></a> [region](#input\_region) | AWS region for cluster. | `string` | n/a | yes |
 | <a name="input_root_block_configuration"></a> [root\_block\_configuration](#input\_root\_block\_configuration) | Configuration for root block device block. | <pre>object({<br>    volume_type = string<br>    volume_size = number<br>  })</pre> | <pre>{<br>  "volume_size": 30,<br>  "volume_type": "gp2"<br>}</pre> | no |
 | <a name="input_security_groups"></a> [security\_groups](#input\_security\_groups) | List of security groups attached to launch configuration. | `list(string)` | `[]` | no |
+| <a name="input_ssm_tag_key"></a> [ssm\_tag\_key](#input\_ssm\_tag\_key) | Tag key to add for SSM access | `bool` | `"SSMAccess"` | no |
+| <a name="input_ssm_tag_value"></a> [ssm\_tag\_value](#input\_ssm\_tag\_value) | Tag value to add for SSM access | `bool` | `"true"` | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of AWS subent IDs for Autoscaling group. | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Additional tags attached to resources. | `map(string)` | `{}` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | AWS VPC id. | `string` | n/a | yes |

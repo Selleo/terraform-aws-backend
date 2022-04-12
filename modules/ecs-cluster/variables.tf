@@ -47,6 +47,18 @@ variable "tags" {
   default     = {}
 }
 
+variable "ssm_tag_key" {
+  type        = bool
+  description = "Tag key to add for SSM access"
+  default     = "SSMAccess"
+}
+
+variable "ssm_tag_value" {
+  type        = bool
+  description = "Tag value to add for SSM access"
+  default     = "true"
+}
+
 variable "ami" {
   type        = string
   description = "Image ID for Autoscaling group. If left blank, latest ECS-optimized version will be used."
