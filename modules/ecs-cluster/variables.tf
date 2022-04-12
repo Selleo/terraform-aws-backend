@@ -48,13 +48,13 @@ variable "tags" {
 }
 
 variable "ssm_tag_key" {
-  type        = bool
+  type        = string
   description = "Tag key to add for SSM access"
   default     = "SSMAccess"
 }
 
 variable "ssm_tag_value" {
-  type        = bool
+  type        = string
   description = "Tag value to add for SSM access"
   default     = "true"
 }
