@@ -43,7 +43,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_loadbalancer_dns_name"></a> [loadbalancer\_dns\_name](#output\_loadbalancer\_dns\_name) | The DNS name of the load balancer. |
-| <a name="output_loadbalancer_id"></a> [loadbalancer\_id](#output\_loadbalancer\_id) | The ARN of the load balancer. |
-| <a name="output_loadbalancer_sg_id"></a> [loadbalancer\_sg\_id](#output\_loadbalancer\_sg\_id) | Security Group attached to the load balancer. |
-| <a name="output_loadbalancer_zone_id"></a> [loadbalancer\_zone\_id](#output\_loadbalancer\_zone\_id) | The canonical hosted zone ID of the load balancer (to be used in a Route 53 Alias record). |
+| <a name="output_dns_name"></a> [dns\_name](#output\_dns\_name) | The DNS name of the load balancer. |
+| <a name="output_id"></a> [id](#output\_id) | The ARN of the load balancer. |
+| <a name="output_security_group_id"></a> [security\_group\_id](#output\_security\_group\_id) | Security Group attached to the load balancer. |
+| <a name="output_zone_id"></a> [zone\_id](#output\_zone\_id) | The canonical hosted zone ID of the load balancer (to be used in a Route 53 Alias record). |
