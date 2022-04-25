@@ -34,6 +34,7 @@ No modules.
 | <a name="input_allow_http"></a> [allow\_http](#input\_allow\_http) | Create ingress rule for port 80. | `bool` | `true` | no |
 | <a name="input_allow_https"></a> [allow\_https](#input\_allow\_https) | Create ingress rule for port 443. | `bool` | `true` | no |
 | <a name="input_cidr_blocks"></a> [cidr\_blocks](#input\_cidr\_blocks) | CIDR blocks used for ingress rules. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
+| <a name="input_ipv6_cidr_blocks"></a> [ipv6\_cidr\_blocks](#input\_ipv6\_cidr\_blocks) | CIDR IPv6 blocks used for ingress rules. | `list(string)` | <pre>[<br>  "::/0"<br>]</pre> | no |
 | <a name="input_name"></a> [name](#input\_name) | Load balancer name. | `string` | n/a | yes |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of AWS subent IDs for Autoscaling group. | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Additional tags attached to resources. | `map(string)` | `{}` | no |

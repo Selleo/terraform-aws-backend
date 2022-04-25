@@ -29,6 +29,7 @@ resource "aws_security_group_rule" "http" {
   to_port           = 80
   protocol          = "tcp"
   cidr_blocks       = var.cidr_blocks
+  ipv6_cidr_blocks  = var.ipv6_cidr_blocks
   security_group_id = aws_security_group.lb_sg.id
 }
 
@@ -40,6 +41,7 @@ resource "aws_security_group_rule" "https" {
   to_port           = 443
   protocol          = "tcp"
   cidr_blocks       = var.cidr_blocks
+  ipv6_cidr_blocks  = var.ipv6_cidr_blocks
   security_group_id = aws_security_group.lb_sg.id
 }
 
@@ -51,6 +53,7 @@ resource "aws_security_group_rule" "allow_all_outbound_lb" {
   to_port           = 0
   protocol          = "all"
   cidr_blocks       = ["0.0.0.0/0"]
+  ipv6_cidr_blocks  = ["::/0"]
   security_group_id = aws_security_group.lb_sg.id
 }
 

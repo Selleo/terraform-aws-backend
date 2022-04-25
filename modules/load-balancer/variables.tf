@@ -41,6 +41,12 @@ variable "cidr_blocks" {
   default     = ["0.0.0.0/0"]
 }
 
+variable "ipv6_cidr_blocks" {
+  type        = list(string)
+  description = "CIDR IPv6 blocks used for ingress rules."
+  default     = ["::/0"]
+}
+
 variable "tags" {
   type        = map(string)
   description = "Additional tags attached to resources."
