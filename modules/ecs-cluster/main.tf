@@ -40,8 +40,9 @@ resource "aws_ecs_cluster" "this" {
 }
 
 resource "aws_placement_group" "this" {
-  name     = random_id.prefix.hex
-  strategy = "spread" # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html
+  name         = random_id.prefix.hex
+  strategy     = var.placement_group.strategy # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html
+  spread_level = var.placement_group.spread_level
 
   tags = var.tags
 }

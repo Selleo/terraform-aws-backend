@@ -121,3 +121,16 @@ variable "root_block_configuration" {
   }
   description = "Configuration for root block device block."
 }
+
+variable "placement_group" {
+  description = "Placement group strategy."
+
+  type = object({
+    strategy     = string
+    spread_level = string
+  })
+  default = {
+    strategy     = "spread" 
+    spread_level = "rack"
+  }
+}
