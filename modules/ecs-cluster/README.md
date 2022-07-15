@@ -21,7 +21,7 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [aws_autoscaling_group.portal_autoscaling_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group) | resource |
+| [aws_autoscaling_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group) | resource |
 | [aws_ecs_cluster.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_cluster) | resource |
 | [aws_iam_instance_profile.instance_profile](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile) | resource |
 | [aws_iam_role.instance_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
@@ -52,6 +52,7 @@ No modules.
 | <a name="input_key_name"></a> [key\_name](#input\_key\_name) | Key pair name for SSH access. | `string` | `""` | no |
 | <a name="input_loadbalancer_sg_id"></a> [loadbalancer\_sg\_id](#input\_loadbalancer\_sg\_id) | LoadBalancer security group id. | `string` | n/a | yes |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | Name prefix (hyphen suffix should be skipped). | `string` | n/a | yes |
+| <a name="input_placement_group"></a> [placement\_group](#input\_placement\_group) | Placement group strategy. | <pre>object({<br>    strategy     = string<br>    spread_level = string<br>  })</pre> | <pre>{<br>  "spread_level": "rack",<br>  "strategy": "spread"<br>}</pre> | no |
 | <a name="input_region"></a> [region](#input\_region) | AWS region for cluster. | `string` | n/a | yes |
 | <a name="input_root_block_configuration"></a> [root\_block\_configuration](#input\_root\_block\_configuration) | Configuration for root block device block. | <pre>object({<br>    volume_type = string<br>    volume_size = number<br>  })</pre> | <pre>{<br>  "volume_size": 30,<br>  "volume_type": "gp2"<br>}</pre> | no |
 | <a name="input_security_groups"></a> [security\_groups](#input\_security\_groups) | List of security groups attached to launch configuration. | `list(string)` | `[]` | no |
@@ -65,6 +66,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_autoscaling_group_name"></a> [autoscaling\_group\_name](#output\_autoscaling\_group\_name) | Autoscaling Group name |
 | <a name="output_ecs_cluster_id"></a> [ecs\_cluster\_id](#output\_ecs\_cluster\_id) | ECS cluster ID (contains randomized suffix). |
 | <a name="output_instance_role"></a> [instance\_role](#output\_instance\_role) | IAM role that is attached to EC2 instances. |
 | <a name="output_instance_security_group_id"></a> [instance\_security\_group\_id](#output\_instance\_security\_group\_id) | ID of the security group attached to an instance. |

@@ -17,3 +17,8 @@ output "instance_security_group_id" {
   value       = aws_security_group.instance_sg.id
   description = "ID of the security group attached to an instance."
 }
+
+output "autoscaling_group_name" {
+  description = "Autoscaling Group name"
+  value       = aws_autoscaling_group.this.name
+}

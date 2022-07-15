@@ -47,7 +47,7 @@ resource "aws_placement_group" "this" {
   tags = var.tags
 }
 
-resource "aws_autoscaling_group" "portal_autoscaling_group" {
+resource "aws_autoscaling_group" "this" {
   name                 = random_id.prefix.hex
   launch_configuration = aws_launch_configuration.this.name
   vpc_zone_identifier  = var.subnet_ids
