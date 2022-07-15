@@ -76,6 +76,12 @@ resource "aws_autoscaling_group" "this" {
     propagate_at_launch = true
   }
 
+  tag {
+    key                 = "ssm.group"
+    value               = var.ssm_tag_value
+    propagate_at_launch = true
+  }
+
   dynamic "tag" {
     for_each = var.tags
     content {
@@ -129,7 +135,11 @@ data "cloudinit_config" "this" {
     content = templatefile("${path.module}/scripts/user_data.sh.tpl",
       {
         ecs_cluster  = aws_ecs_cluster.this.name,
-        ecs_loglevel = var.ecs_loglevel
+        ecs_loglevel = var.ecs_loglevel,
+        ecs_tags = jsonencode(merge(var.tags, {
+          "Name"      = random_id.prefix.hex,
+          "ssm.group" = var.ssm_tag_value,
+        }))  
       }
     )
   }
