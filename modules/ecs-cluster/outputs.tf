@@ -1,4 +1,4 @@
-output "ecs_cluster_id" {
+output "cluster_id" {
   value       = aws_ecs_cluster.this.id
   description = "ECS cluster ID (contains randomized suffix)."
 }
@@ -18,7 +18,11 @@ output "instance_security_group_id" {
   description = "ID of the security group attached to an instance."
 }
 
-output "autoscaling_group_name" {
-  description = "Autoscaling Group name"
-  value       = aws_autoscaling_group.this.name
+output "autoscaling_group" {
+  description = "Autoscaling Group data."
+  value = {
+    arn  = aws_autoscaling_group.this.arn
+    name = aws_autoscaling_group.this.name
+  }
 }
+
