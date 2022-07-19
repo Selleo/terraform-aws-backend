@@ -59,6 +59,12 @@ variable "ssm_tag_value" {
   default     = "true"
 }
 
+variable "protect_from_scale_in" {
+  type        = bool
+  description = "If protect from scale in is enabled, newly launched instances will be protected from scale in by default."
+  default     = false 
+}
+
 variable "ami" {
   type        = string
   description = "Image ID for Autoscaling group. If left blank, latest ECS-optimized version will be used."

@@ -7,6 +7,11 @@ locals {
   )}"
 }
 
+resource "random_id" "prefix" {
+  byte_length = 4
+  prefix      = "${var.name}-"
+}
+
 resource "aws_cloudwatch_log_group" "this" {
   name              = var.name
   retention_in_days = var.log_retention_in_days
@@ -101,7 +106,7 @@ resource "aws_ecs_service" "this" {
 }
 
 resource "aws_iam_role" "ecs" {
-  name               = "${var.name}-ecs-role"
+  name               = "${random_id.prefix.hex}-ecs"
   assume_role_policy = data.aws_iam_policy_document.ecs.json
 
   tags = var.tags

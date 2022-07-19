@@ -52,9 +52,10 @@ resource "aws_autoscaling_group" "this" {
   launch_configuration = aws_launch_configuration.this.name
   vpc_zone_identifier  = var.subnet_ids
 
-  min_size         = var.autoscaling_group.min_size
-  desired_capacity = var.autoscaling_group.desired_capacity
-  max_size         = var.autoscaling_group.max_size
+  min_size              = var.autoscaling_group.min_size
+  desired_capacity      = var.autoscaling_group.desired_capacity
+  max_size              = var.autoscaling_group.max_size
+  protect_from_scale_in = var.protect_from_scale_in
 
   placement_group      = aws_placement_group.this.id
   termination_policies = ["OldestInstance"]
