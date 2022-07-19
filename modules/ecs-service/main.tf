@@ -5,6 +5,10 @@ locals {
     aws_ecs_task_definition.this.revision,
     data.aws_ecs_task_definition.this.revision,
   )}"
+
+  container_definition_overrides = {
+    command = var.command
+  }
 }
 
 resource "random_id" "prefix" {
@@ -24,29 +28,30 @@ resource "aws_ecs_task_definition" "this" {
 
   container_definitions = jsonencode(
     [
-      {
+      merge({
         essential         = true,
-        memoryReservation = var.container_definition.mem_units,
-        cpu               = var.container_definition.cpu_units,
+        memoryReservation = var.container.mem_units,
+        cpu               = var.container.cpu_units,
         name              = var.name,
-        command           = var.container_definition.command,
-        image             = var.container_definition.image,
+        image             = var.container.image,
         mountPoints       = [],
         volumesFrom       = [],
         portMappings = [
           {
-            containerPort = var.container_definition.container_port,
+            containerPort = var.container.port,
             hostPort      = 0,
             protocol      = "tcp",
           },
         ],
+
         environment = [
-          for k, v in var.container_definition.envs :
+          for k, v in var.container.envs :
           {
             name  = k
             value = v
           }
         ],
+
         logConfiguration = {
           logDriver = "awslogs",
           options = {
@@ -54,7 +59,7 @@ resource "aws_ecs_task_definition" "this" {
             awslogs-region = data.aws_region.current.name,
           },
         },
-      }
+      }, length(var.command) == 0 ? {} : local.container_definition_overrides) # merge only if command not empty
   ])
 
   tags = var.tags
@@ -75,7 +80,7 @@ resource "aws_ecs_service" "this" {
   load_balancer {
     target_group_arn = aws_alb_target_group.this.arn
     container_name   = var.name
-    container_port   = var.container_definition.container_port
+    container_port   = var.container.port
   }
 
   desired_count                      = var.desired_count
@@ -168,7 +173,7 @@ data "aws_iam_policy_document" "alb" {
 
 resource "aws_alb_target_group" "this" {
   name                 = var.name
-  port                 = var.container_definition.container_port
+  port                 = var.container.port
   protocol             = "HTTP"
   vpc_id               = var.vpc_id
   deregistration_delay = 30 # draining time

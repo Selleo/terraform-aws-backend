@@ -25,14 +25,13 @@ variable "desired_count" {
   description = "Desired task count."
 }
 
-variable "container_definition" {
+variable "container" {
   type = object({
-    cpu_units      = number
-    mem_units      = number
-    command        = list(string)
-    image          = string
-    container_port = number
-    envs           = map(string)
+    cpu_units = number
+    mem_units = number
+    image     = string
+    port      = number
+    envs      = map(string)
   })
   description = "Service container configuration."
 }
@@ -43,6 +42,12 @@ variable "tags" {
   type        = map(string)
   description = "Additional tags attached to resources."
   default     = {}
+}
+
+variable "command" {
+  type        = list(string)
+  description = "Service container command override."
+  default     = []
 }
 
 variable "health_check" {
