@@ -25,6 +25,13 @@ variable "instance_type" {
   description = "EC2 instance type i.e. t3.medium."
 }
 
+variable "lb_security_group_id" {
+  type        = string
+  description = "Load balancer security group id."
+}
+
+# optional
+
 variable "autoscaling_group" {
   type = object({
     min_size         = number
@@ -32,14 +39,12 @@ variable "autoscaling_group" {
     desired_capacity = number
   })
   description = "Autoscaling group configuration."
+  default = {
+    min_size         = 1
+    max_size         = 5
+    desired_capacity = 2
+  }
 }
-
-variable "loadbalancer_sg_id" {
-  type        = string
-  description = "LoadBalancer security group id."
-}
-
-# optional
 
 variable "tags" {
   type        = map(string)
@@ -62,7 +67,7 @@ variable "ssm_tag_value" {
 variable "protect_from_scale_in" {
   type        = bool
   description = "If protect from scale in is enabled, newly launched instances will be protected from scale in by default."
-  default     = false 
+  default     = false
 }
 
 variable "ami" {
@@ -93,6 +98,12 @@ variable "cloudinit_parts" {
   default     = []
 }
 
+variable "cloudinit_scripts" {
+  type        = list(string)
+  description = "Shell scripts added to cloud-init."
+  default     = []
+}
+
 variable "enable_container_insights" {
   type        = bool
   description = "Enable container insights for the cluster."
@@ -112,7 +123,7 @@ variable "ecs_loglevel" {
 
 variable "associate_public_ip_address" {
   type        = bool
-  default     = false
+  default     = true
   description = "Associate a public ip address with an instance in a VPC."
 }
 
@@ -136,7 +147,7 @@ variable "placement_group" {
     spread_level = string
   })
   default = {
-    strategy     = "spread" 
+    strategy     = "spread"
     spread_level = "rack"
   }
 }

@@ -113,7 +113,7 @@ resource "aws_security_group_rule" "ephemeral_port_range" {
   from_port                = 32768
   to_port                  = 65535
   protocol                 = "tcp"
-  source_security_group_id = var.loadbalancer_sg_id
+  source_security_group_id = var.lb_security_group_id
   security_group_id        = aws_security_group.instance_sg.id
 }
 
@@ -140,9 +140,18 @@ data "cloudinit_config" "this" {
         ecs_tags = jsonencode(merge(var.tags, {
           "Name"      = random_id.prefix.hex,
           "ssm.group" = var.ssm_tag_value,
-        }))  
+        }))
       }
     )
+  }
+
+  dynamic "part" {
+    for_each = var.cloudinit_scripts
+    content {
+      filename     = "${part.key}.sh"
+      content      = part.value
+      content_type = "text/x-shellscript"
+    }
   }
 
   dynamic "part" {
