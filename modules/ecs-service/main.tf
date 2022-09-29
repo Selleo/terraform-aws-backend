@@ -30,7 +30,8 @@ resource "aws_ecs_task_definition" "this" {
     [
       merge({
         essential         = true,
-        memoryReservation = var.container.mem_units,
+        memoryReservation = var.container.mem_reservation_units,
+        memory            = var.container.mem_units,
         cpu               = var.container.cpu_units,
         name              = var.name,
         image             = var.container.image,

@@ -27,13 +27,18 @@ variable "desired_count" {
 
 variable "container" {
   type = object({
-    cpu_units = number
-    mem_units = number
-    image     = string
-    port      = number
-    envs      = map(string)
+    cpu_units             = number
+    mem_units             = number
+    mem_reservation_units = number
+    image                 = string
+    port                  = number
+    envs                  = map(string)
   })
-  description = "Service container configuration."
+  description = <<EOS
+    Service container configuration.
+    `mem_reservation_units` is used for allocation, exceeding `mem_units` will kill the container. 
+    Memory units should be greater than reservation units.
+  EOS
 }
 
 # optional
