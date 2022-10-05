@@ -14,16 +14,17 @@ resource "aws_ecs_task_definition" "this" {
     [
       {
         essential         = true,
-        memoryReservation = var.container_definition.mem_units,
-        cpu               = var.container_definition.cpu_units,
+        memoryReservation = var.container.mem_reservation_units,
+        memory            = var.container.mem_units,
+        cpu               = var.container.cpu_units,
         name              = var.name,
-        command           = var.container_definition.command,
-        image             = var.container_definition.image,
+        command           = var.container.command,
+        image             = var.container.image,
         mountPoints       = [],
         volumesFrom       = [],
         portMappings      = [],
         environment = [
-          for k, v in var.container_definition.envs :
+          for k, v in var.container.envs :
           {
             name  = k
             value = v
