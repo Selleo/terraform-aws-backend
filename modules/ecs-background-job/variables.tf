@@ -26,7 +26,7 @@ variable "container" {
     mem_units             = number
     mem_reservation_units = number
     image                 = string
-    command               = string
+    command               = list(string)
     envs                  = map(string)
   })
   description = <<EOS
