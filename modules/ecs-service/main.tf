@@ -83,7 +83,7 @@ resource "aws_ecs_task_definition" "one_off" {
   container_definitions = jsonencode(
     [
       {
-        command           = each.key
+        command           = [each.key]
         essential         = true,
         memoryReservation = var.container.mem_reservation_units,
         memory            = var.container.mem_units,
