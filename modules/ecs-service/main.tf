@@ -83,6 +83,7 @@ resource "aws_ecs_task_definition" "one_off" {
   container_definitions = jsonencode(
     [
       {
+        command           = each.key
         essential         = true,
         memoryReservation = var.container.mem_reservation_units,
         memory            = var.container.mem_units,
@@ -91,7 +92,7 @@ resource "aws_ecs_task_definition" "one_off" {
         image             = var.container.image,
         mountPoints       = [],
         volumesFrom       = [],
-        portMappings = [],
+        portMappings      = [],
 
         environment = [
           for k, v in var.container.envs :
