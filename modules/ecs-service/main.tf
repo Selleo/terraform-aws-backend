@@ -76,7 +76,7 @@ resource "aws_ecs_task_definition" "this" {
 }
 
 resource "aws_ecs_task_definition" "one_off" {
-  for_each = var.name
+  for_each = var.one_off_commands
 
   family = "${var.name}-${each.key}"
 
