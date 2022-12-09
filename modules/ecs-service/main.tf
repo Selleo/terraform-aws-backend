@@ -23,6 +23,15 @@ resource "aws_cloudwatch_log_group" "this" {
   tags = var.tags
 }
 
+resource "aws_cloudwatch_log_group" "one_off" {
+  for_each = var.one_off_commands
+
+  name              = "${var.name}-${each.key}"
+  retention_in_days = var.log_retention_in_days
+
+  tags = var.tags
+}
+
 resource "aws_ecs_task_definition" "this" {
   family = var.name
 
@@ -66,11 +75,49 @@ resource "aws_ecs_task_definition" "this" {
   tags = var.tags
 }
 
+resource "aws_ecs_task_definition" "one_off" {
+  for_each = var.name
+
+  family = "${var.name}-${each.key}"
+
+  container_definitions = jsonencode(
+    [
+      {
+        essential         = true,
+        memoryReservation = var.container.mem_reservation_units,
+        memory            = var.container.mem_units,
+        cpu               = var.container.cpu_units,
+        name              = var.name,
+        image             = var.container.image,
+        mountPoints       = [],
+        volumesFrom       = [],
+        portMappings = [],
+
+        environment = [
+          for k, v in var.container.envs :
+          {
+            name  = k
+            value = v
+          }
+        ],
+
+        logConfiguration = {
+          logDriver = "awslogs",
+          options = {
+            awslogs-group  = aws_cloudwatch_log_group.one_off[each.key].name,
+            awslogs-region = data.aws_region.current.name,
+          },
+        },
+      }
+  ])
+
+  tags = var.tags
+}
+
 data "aws_ecs_task_definition" "this" {
   task_definition = aws_ecs_task_definition.this.family
   depends_on      = [aws_ecs_task_definition.this]
 }
-
 
 resource "aws_ecs_service" "this" {
   name            = var.name
@@ -96,16 +143,6 @@ resource "aws_ecs_service" "this" {
   ordered_placement_strategy {
     type  = "spread"
     field = "instanceId"
-  }
-
-  ordered_placement_strategy {
-    type  = "binpack"
-    field = "cpu"
-  }
-
-  ordered_placement_strategy {
-    type  = "binpack"
-    field = "memory"
   }
 
   tags = var.tags
@@ -138,6 +175,14 @@ resource "aws_iam_role_policy" "cloudwatch" {
   policy = data.aws_iam_policy_document.cloudwatch.json
 }
 
+resource "aws_iam_role_policy" "cloudwatch_one_off" {
+  for_each = var.one_off_commands
+
+  name   = "${var.name}-${each.key}-cloudwatch-policy"
+  role   = var.instance_role
+  policy = data.aws_iam_policy_document.cloudwatch_one_off[each.key].json
+}
+
 data "aws_iam_policy_document" "cloudwatch" {
   statement {
     effect = "Allow"
@@ -147,6 +192,20 @@ data "aws_iam_policy_document" "cloudwatch" {
     ]
 
     resources = ["${aws_cloudwatch_log_group.this.arn}:*"]
+  }
+}
+
+data "aws_iam_policy_document" "cloudwatch_one_off" {
+  for_each = var.one_off_commands
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+
+    resources = ["${aws_cloudwatch_log_group.one_off[each.key].arn}:*"]
   }
 }
 

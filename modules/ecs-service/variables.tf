@@ -36,7 +36,7 @@ variable "container" {
   })
   description = <<EOS
     Service container configuration.
-    `mem_reservation_units` is used for allocation, exceeding `mem_units` will kill the container. 
+    `mem_reservation_units` is used for allocation, exceeding `mem_units` will kill the container.
     Memory units should be greater than reservation units.
   EOS
 }
@@ -52,6 +52,12 @@ variable "tags" {
 variable "command" {
   type        = list(string)
   description = "Service container command override."
+  default     = []
+}
+
+variable "one_off_commands" {
+  type        = set(string)
+  description = "Set of commands that the tasks are created for."
   default     = []
 }
 
