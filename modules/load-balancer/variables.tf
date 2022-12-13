@@ -17,6 +17,12 @@ variable "subnet_ids" {
 
 # optional
 
+variable "force_https" {
+  type        = bool
+  description = "Creates redirection from HTTP to HTTPS."
+  default     = true
+}
+
 variable "allow_http" {
   type        = bool
   description = "Create ingress rule for port 80."

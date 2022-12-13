@@ -13,6 +13,25 @@ resource "aws_alb" "this" {
   tags = var.tags
 }
 
+resource "aws_alb_listener" "this" {
+  count = var.allow_http && var.force_https ? 1 : 0
+
+  load_balancer_arn = resource.aws_alb.this.id
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+      query       = "#{query}"
+    }
+  }
+}
+
 resource "aws_security_group" "lb_sg" {
   description = "controls access to the application ELB"
   vpc_id      = var.vpc_id
@@ -56,4 +75,3 @@ resource "aws_security_group_rule" "allow_all_outbound_lb" {
   ipv6_cidr_blocks  = ["::/0"]
   security_group_id = aws_security_group.lb_sg.id
 }
-
