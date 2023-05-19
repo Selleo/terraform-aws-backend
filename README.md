@@ -1,20 +1,8 @@
 # Terraform AWS backend module
 
-Collection of Terraform modules for backend app deployment on AWS. See [Changelog](https://github.com/Selleo/terraform-aws-backend/blob/main/CHANGELOG.md) for release information.
-
-## List of submodules
-
-* [ECS service](https://registry.terraform.io/modules/Selleo/backend/aws/latest/submodules/ecs-service)
-* [ECS background job](https://registry.terraform.io/modules/Selleo/backend/aws/latest/submodules/ecs-background-job)
-* [ECS cluster](https://registry.terraform.io/modules/Selleo/backend/aws/latest/submodules/ecs-cluster)
-* [Load balancer](https://registry.terraform.io/modules/Selleo/backend/aws/latest/submodules/load-balancer)
-
-## Maintainers
-
-See [Dev document](https://github.com/Selleo/terraform-aws-backend/blob/main/DEV.md) for development instructions.
-
-* Bartłomiej Wójtowicz ([@qbart](https://github.com/qbart)) 
-* Łukasz Pawlik ([@LukeP91](https://github.com/LukeP91))
+This module is deprecated. It has been split into multiple modules that offer greater functionality and flexibility:
+- [Selleo/terraform-aws-ecs](https://github.com/selleo/terraform-aws-ecs)
+- [Selleo/terraform-aws-lb](https://github.com/Selleo/terraform-aws-lb)
 
 ## LICENSE
 
