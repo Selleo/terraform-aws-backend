@@ -43,7 +43,8 @@ data "aws_iam_policy_document" "ecs_instance" {
       "ecr:GetAuthorizationToken",
       "ecr:BatchCheckLayerAvailability",
       "ecr:GetDownloadUrlForLayer",
-      "ecr:BatchGetImage"
+      "ecr:BatchGetImage",
+      "ecs:TagResource",
     ]
 
     resources = ["*"]
